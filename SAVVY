@@ -1,0 +1,338 @@
+{
+  "name": "savvy-spenders",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.0"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.3",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.24"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build"
+  }
+}
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+    "./public/index.html",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        brightblue: '#2e82ff',
+        olivegreen: '#78a962',
+        accent: '#ffb700',
+      },
+    },
+  },
+  plugins: [],
+}
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Savvy Spenders</title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background: linear-gradient(135deg, #2e82ff 40%, #78a962 100%);
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Sidebar from './components/Sidebar';
+import QuestionnairePage from './pages/QuestionnairePage';
+import DashboardPage from './pages/DashboardPage';
+import TaxCalculatorPage from './pages/TaxCalculatorPage';
+import PropertyFinderPage from './pages/PropertyFinderPage';
+import ProfileSettingsPage from './pages/ProfileSettingsPage';
+
+function App() {
+  return (
+    <Router>
+      <div className="flex min-h-screen bg-gradient-to-br from-brightblue to-olivegreen">
+        <Sidebar />
+        <div className="flex-1 p-4">
+          <Routes>
+            <Route path="/" element={<QuestionnairePage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/tax-calculator" element={<TaxCalculatorPage />} />
+            <Route path="/property-finder" element={<PropertyFinderPage />} />
+            <Route path="/profile-settings" element={<ProfileSettingsPage />} />
+          </Routes>
+        </div>
+      </div>
+    </Router>
+  );
+}
+
+export default App;import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+
+const navItems = [
+  { name: 'Dashboard', path: '/dashboard', icon: '🏠' },
+  { name: 'Tax Calculator', path: '/tax-calculator', icon: '💷' },
+  { name: 'Property Finder', path: '/property-finder', icon: '🏡' },
+  { name: 'Profile', path: '/profile-settings', icon: '👤' },
+];
+
+function Sidebar() {
+  const location = useLocation();
+  return (
+    <nav className="w-20 md:w-56 bg-white bg-opacity-70 rounded-r-3xl shadow-lg flex flex-col items-center py-8 fixed h-full z-10">
+      <div className="mb-8 text-2xl font-bold text-brightblue">Savvy Spenders</div>
+      <ul className="space-y-6 w-full">
+        {navItems.map(item => (
+          <li key={item.name}>
+            <Link
+              to={item.path}
+              className={`flex items-center px-4 py-2 rounded-lg transition-all
+                ${location.pathname === item.path ? 'bg-brightblue text-white font-bold' : 'text-brightblue hover:bg-accent hover:text-white'}`}
+            >
+              <span className="text-xl mr-4">{item.icon}</span>
+              <span className="hidden md:inline">{item.name}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-auto text-xs text-gray-500 text-center px-2">
+        Built by Achyuth Koneti
+      </div>
+    </nav>
+  );
+}
+
+export default Sidebar;import React, { useState } from 'react';
+
+const initialState = {
+  income: '',
+  expenses: '',
+  savingsGoal: '',
+  age: '',
+  location: '',
+  employmentStatus: '',
+  existingSavings: '',
+  riskTolerance: '',
+};
+
+function QuestionnairePage() {
+  const [form, setForm] = useState(initialState);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // TODO: Send form to backend for AI report generation
+  };
+
+  return (
+    <div className="max-w-xl mx-auto mt-10 bg-white bg-opacity-90 rounded-3xl shadow-xl p-8">
+      <h2 className="text-2xl font-bold text-brightblue mb-6">Get Started: Tell Us About Your Finances</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input type="number" name="income" placeholder="Monthly Income After Tax (£)" value={form.income} onChange={handleChange} required className="w-full p-3 rounded-lg border"/>
+        <input type="number" name="expenses" placeholder="Monthly Expenses (£, rent + bills)" value={form.expenses} onChange={handleChange} required className="w-full p-3 rounded-lg border"/>
+        <input type="number" name="savingsGoal" placeholder="Savings Goal (£)" value={form.savingsGoal} onChange={handleChange} className="w-full p-3 rounded-lg border"/>
+        <input type="number" name="existingSavings" placeholder="Existing Savings (£)" value={form.existingSavings} onChange={handleChange} className="w-full p-3 rounded-lg border"/>
+        <input type="number" name="age" placeholder="Age" value={form.age} onChange={handleChange} required className="w-full p-3 rounded-lg border"/>
+        <input type="text" name="location" placeholder="Location (e.g., London)" value={form.location} onChange={handleChange} required className="w-full p-3 rounded-lg border"/>
+        <select name="employmentStatus" value={form.employmentStatus} onChange={handleChange} required className="w-full p-3 rounded-lg border">
+          <option value="">Employment Status</option>
+          <option value="Employed">Employed</option>
+          <option value="Self-Employed">Self-Employed</option>
+          <option value="Student">Student</option>
+          <option value="Retired">Retired</option>
+          <option value="Unemployed">Unemployed</option>
+        </select>
+        <select name="riskTolerance" value={form.riskTolerance} onChange={handleChange} required className="w-full p-3 rounded-lg border">
+          <option value="">Risk Tolerance</option>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+        </select>
+        <button type="submit" className="w-full py-3 bg-brightblue text-white font-bold rounded-lg hover:bg-accent transition">Generate AI Savings Report</button>
+      </form>
+    </div>
+  );
+}
+
+export default QuestionnairePage;import React from 'react';
+
+function DashboardPage() {
+  // TODO: Fetch user data and AI report from backend
+  return (
+    <div className="max-w-3xl mx-auto mt-10 bg-white bg-opacity-95 rounded-3xl shadow-xl p-8">
+      <h2 className="text-2xl font-bold text-brightblue mb-6">Your Savings Dashboard</h2>
+      <div className="mb-4">
+        <div className="text-lg font-semibold">AI Generated Report:</div>
+        <div className="bg-olivegreen bg-opacity-10 p-4 rounded-xl my-2 text-gray-700">
+          {/* Render AI tips, tax loopholes, savings plan, goal suggestions */}
+          <p>Maximize savings by automating transfers to your savings account, review subscriptions, use salary sacrifice schemes for pension contributions, and check if you’re eligible for ISA accounts for tax-free savings.</p>
+          <p>For your area, explore shared ownership schemes for property purchase and check Rightmove for filtered property options below.</p>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-brightblue bg-opacity-10 rounded-xl p-6">
+          <div className="font-bold text-brightblue mb-2">Budget Breakdown</div>
+          <div>Savings: £800 / £1500 goal</div>
+          <div className="w-full bg-gray-300 rounded-full h-4 mt-2">
+            <div className="bg-brightblue h-4 rounded-full" style={{ width: '53%' }}></div>
+          </div>
+        </div>
+        <div className="bg-olivegreen bg-opacity-10 rounded-xl p-6">
+          <div className="font-bold text-olivegreen mb-2">Quick Actions</div>
+          <ul>
+            <li><a href="/profile-settings" className="text-brightblue underline">Update Profile</a></li>
+            <li><a href="/tax-calculator" className="text-brightblue underline">UK Tax Calculator</a></li>
+            <li><a href="/property-finder" className="text-brightblue underline">Find Properties</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default DashboardPage;import React, { useState } from 'react';
+
+function TaxCalculatorPage() {
+  const [income, setIncome] = useState('');
+  const [tax, setTax] = useState(null);
+
+  const calculateTax = () => {
+    let annual = parseInt(income) * 12;
+    let taxAmount = 0;
+    if (annual <= 12570) taxAmount = 0;
+    else if (annual <= 50270) taxAmount = (annual - 12570) * 0.2;
+    else taxAmount = (50270 - 12570) * 0.2 + (annual - 50270) * 0.4;
+    setTax(taxAmount);
+  };
+
+  return (
+    <div className="max-w-xl mx-auto mt-10 bg-white bg-opacity-90 rounded-3xl shadow-xl p-8">
+      <h2 className="text-2xl font-bold text-brightblue mb-6">UK Income Tax Calculator</h2>
+      <input type="number" placeholder="Monthly Income (£)" value={income} onChange={e => setIncome(e.target.value)} className="w-full p-3 rounded-lg border mb-4"/>
+      <button onClick={calculateTax} className="w-full py-3 bg-brightblue text-white font-bold rounded-lg hover:bg-accent transition">Calculate Tax</button>
+      {tax !== null && (
+        <div className="mt-4 text-lg">
+          Estimated Annual Tax: <span className="font-bold text-olivegreen">£{tax.toFixed(2)}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default TaxCalculatorPage;import React, { useState } from 'react';
+
+function PropertyFinderPage() {
+  const [location, setLocation] = useState('');
+  const [type, setType] = useState('rent');
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+
+  const buildRightmoveUrl = () => {
+    let base = type === 'buy'
+      ? 'https://www.rightmove.co.uk/property-for-sale/find.html'
+      : 'https://www.rightmove.co.uk/property-to-rent/find.html';
+    let params = `?locationIdentifier=OUTCODE%5E${encodeURIComponent(location)}&minPrice=${minPrice}&maxPrice=${maxPrice}`;
+    return base + params;
+  };
+
+  return (
+    <div className="max-w-xl mx-auto mt-10 bg-white bg-opacity-90 rounded-3xl shadow-xl p-8">
+      <h2 className="text-2xl font-bold text-brightblue mb-6">Find Properties in Your Area</h2>
+      <input type="text" placeholder="Location (e.g. London)" value={location} onChange={e => setLocation(e.target.value)} className="w-full p-3 rounded-lg border mb-4"/>
+      <select value={type} onChange={e => setType(e.target.value)} className="w-full p-3 rounded-lg border mb-4">
+        <option value="rent">Rent</option>
+        <option value="buy">Buy</option>
+      </select>
+      <input type="number" placeholder="Min Price (£)" value={minPrice} onChange={e => setMinPrice(e.target.value)} className="w-full p-3 rounded-lg border mb-4"/>
+      <input type="number" placeholder="Max Price (£)" value={maxPrice} onChange={e => setMaxPrice(e.target.value)} className="w-full p-3 rounded-lg border mb-4"/>
+      <a
+        href={buildRightmoveUrl()}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-full block py-3 bg-brightblue text-white font-bold rounded-lg hover:bg-accent mt-4 text-center"
+      >
+        Search on Rightmove
+      </a>
+    </div>
+  );
+}
+
+export default PropertyFinderPage;import React, { useState, useEffect } from 'react';
+
+function ProfileSettingsPage() {
+  const [profile, setProfile] = useState({});
+
+  useEffect(() => {
+    setProfile({
+      income: 2500, expenses: 1200, savingsGoal: 1500, location: 'London', age: 30, employmentStatus: 'Employed', riskTolerance: 'Medium'
+    });
+  }, []);
+
+  const handleChange = (e) => {
+    setProfile({ ...profile, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // TODO: Save updated profile to backend
+  };
+
+  return (
+    <div className="max-w-xl mx-auto mt-10 bg-white bg-opacity-90 rounded-3xl shadow-xl p-8">
+      <h2 className="text-2xl font-bold text-brightblue mb-6">Update Your Finance Profile</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input type="number" name="income" placeholder="Monthly Income After Tax (£)" value={profile.income} onChange={handleChange} required className="w-full p-3 rounded-lg border"/>
+        <input type="number" name="expenses" placeholder="Monthly Expenses (£)" value={profile.expenses} onChange={handleChange} required className="w-full p-3 rounded-lg border"/>
+        <input type="number" name="savingsGoal" placeholder="Savings Goal (£)" value={profile.savingsGoal} onChange={handleChange} className="w-full p-3 rounded-lg border"/>
+        <input type="text" name="location" placeholder="Location" value={profile.location} onChange={handleChange} required className="w-full p-3 rounded-lg border"/>
+        <input type="number" name="age" placeholder="Age" value={profile.age} onChange={handleChange} required className="w-full p-3 rounded-lg border"/>
+        <select name="employmentStatus" value={profile.employmentStatus} onChange={handleChange} required className="w-full p-3 rounded-lg border">
+          <option value="">Employment Status</option>
+          <option value="Employed">Employed</option>
+          <option value="Self-Employed">Self-Employed</option>
+          <option value="Student">Student</option>
+          <option value="Retired">Retired</option>
+          <option value="Unemployed">Unemployed</option>
+        </select>
+        <select name="riskTolerance" value={profile.riskTolerance} onChange={handleChange} required className="w-full p-3 rounded-lg border">
+          <option value="">Risk Tolerance</option>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+        </select>
+        <button type="submit" className="w-full py-3 bg-brightblue text-white font-bold rounded-lg hover:bg-accent transition">Save Profile</button>
+      </form>
+    </div>
+  );
